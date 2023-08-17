@@ -1,0 +1,23 @@
+{
+  "name": "gptslackbot",
+  "version": "1.0.0",
+  "description": "\"# GptSlackBot\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yusuke-koya/GptSlackBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yusuke-koya/GptSlackBot/issues"
+  },
+  "homepage": "https://github.com/yusuke-koya/GptSlackBot#readme",
+  "dependencies": {
+    "@slack/web-api": "^6.9.0",
+    "openai": "^4.0.0"
+  }
+}
