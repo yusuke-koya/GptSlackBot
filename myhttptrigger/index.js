@@ -87,20 +87,14 @@ module.exports = async function (context, req) {
     return;
   }
 
-  try{
-  context.log(`user:${body.event.user}, message:${body.event.text}`); // 投稿したユーザのIDとテキスト
+//  context.log(`user:${body.event.user}, message:${body.event.text}`); // 投稿したユーザのIDとテキスト
 //   context.log.warn('警告');
 //   context.log.error('エラー');
-  }catch(e){
-    context.log('1');
-    throw e;
-  }
 
   const event = body.event;
   const threadTs = event?.thread_ts ?? event?.ts;
   if (event?.type === "app_mention") {
     try {
-      try{
       if(hasNgWord(body.event.text)) {
         await postMessage(
           event.channel,
@@ -110,11 +104,6 @@ module.exports = async function (context, req) {
         );
         return;
       }
-  }catch(e){
-    context.log('2');
-    throw e;
-  }
-      
 
       const threadMessagesResponse = await slackClient.conversations.replies({
         channel: event.channel,
@@ -176,7 +165,6 @@ module.exports = async function (context, req) {
       context.log("ChatGPTBot function post message successfully.");
       return { statusCode: 200 };
     } catch (error) {
-      context.log('3');
       context.log(
         await postMessage(
           event.channel,
