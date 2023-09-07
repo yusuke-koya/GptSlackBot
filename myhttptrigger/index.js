@@ -67,7 +67,7 @@ const hasNgWord = (text) => {
 }
 
 module.exports = async function (context, req) {
-  context.log('テスト');
+  context.log('1');
   // Ignore retry requests
   if (req.headers["x-slack-retry-num"]) {
     context.log("Ignoring Retry request: " + req.headers["x-slack-retry-num"]);
@@ -77,6 +77,7 @@ module.exports = async function (context, req) {
       body: JSON.stringify({ message: "No need to resend" }),
     };
   }
+  context.log('2');
 
   // Response slack challenge requests
   const body = eval(req.body);
@@ -87,6 +88,7 @@ module.exports = async function (context, req) {
     };
     return;
   }
+  context.log('3');
 
   context.log(`user:${body.event.user}, message:${body.event.text}`); // 投稿したユーザのIDとテキスト
 //   context.log.warn('警告');
@@ -94,8 +96,10 @@ module.exports = async function (context, req) {
 
   const event = body.event;
   const threadTs = event?.thread_ts ?? event?.ts;
+  context.log('4');
   if (event?.type === "app_mention") {
     try {
+      context.log('5');
       if(hasNgWord(body.event.text)) {
         await postMessage(
           event.channel,
@@ -105,11 +109,13 @@ module.exports = async function (context, req) {
         );
         return;
       }
+      context.log('6');
 
       const threadMessagesResponse = await slackClient.conversations.replies({
         channel: event.channel,
         ts: threadTs,
       });
+      context.log('7');
       if (threadMessagesResponse.ok !== true) {
         await postMessage(
           event.channel,
@@ -119,6 +125,7 @@ module.exports = async function (context, req) {
         );
         return;
       }
+      context.log('8');
       const botMessages = threadMessagesResponse.messages
         .sort((a, b) => Number(a.ts) - Number(b.ts))
         // .filter(
@@ -134,6 +141,7 @@ module.exports = async function (context, req) {
             // context.log(m.text);
           return { role: role, content: m.text.replace(/]+>/g, "") };
         });
+      context.log('9');
       if (botMessages.length < 1) {
         await postMessage(
           event.channel,
@@ -143,6 +151,7 @@ module.exports = async function (context, req) {
         );
         return;
       }
+      context.log('10');
       context.log(botMessages);
       var postMessages = [
         {
@@ -151,6 +160,7 @@ module.exports = async function (context, req) {
         },
         ...botMessages,
       ];
+      context.log('11');
       const openaiResponse = await createCompletion(postMessages, context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
@@ -161,6 +171,7 @@ module.exports = async function (context, req) {
         );
         return { statusCode: 200 };
       }
+      context.log('12');
     //   context.log(openaiResponse);
       await postMessage(event.channel, openaiResponse, threadTs, context);
       context.log("ChatGPTBot function post message successfully.");
