@@ -67,6 +67,7 @@ const hasNgWord = (text) => {
 }
 
 module.exports = async function (context, req) {
+  context.log('テスト');
   // Ignore retry requests
   if (req.headers["x-slack-retry-num"]) {
     context.log("Ignoring Retry request: " + req.headers["x-slack-retry-num"]);
