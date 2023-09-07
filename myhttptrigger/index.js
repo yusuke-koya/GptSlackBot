@@ -87,15 +87,15 @@ module.exports = async function (context, req) {
     return;
   }
 
-//  context.log(`user:${body.event.user}, message:${body.event.text}`); // 投稿したユーザのIDとテキスト
 //   context.log.warn('警告');
 //   context.log.error('エラー');
 
   const event = body.event;
+  context.log(`user:${event?.user}, message:${event?.text}`); // 投稿したユーザのIDとテキスト
   const threadTs = event?.thread_ts ?? event?.ts;
   if (event?.type === "app_mention") {
     try {
-      if(hasNgWord(body.event.text)) {
+      if(hasNgWord(event?.text)) {
         await postMessage(
           event.channel,
           "不適切な言葉が含まれています。",
