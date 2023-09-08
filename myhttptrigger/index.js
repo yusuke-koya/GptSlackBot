@@ -1,3 +1,4 @@
+const { BlobServiceClient } = require("@azure/storage-blob");
 const { WebClient } = require("@slack/web-api");
 const {
   ChatCompletionRequestMessageRoleEnum,
@@ -59,12 +60,6 @@ const createCompletion = async (messages, context) => {
     return err.response.statusText;
   }
 };
-
-// NGワードのチェック
-const hasNgWord = (text) => {
-  const regex = /うんこ|クソ|アホ|.*\d{3}-?\d{4}.*/;
-  return regex.test(text);
-}
 
 module.exports = async function (context, req) {
   // Ignore retry requests
@@ -179,3 +174,66 @@ module.exports = async function (context, req) {
     status: 200,
   };
 };
+
+
+
+async function hasNgWord(text) {
+  try {
+    console.log("Azure Blob storage v12 - JavaScript quickstart sample");
+
+    // Quick start code goes here
+    const AZURE_STORAGE_CONNECTION_STRING = 
+    process.env.AZURE_STORAGE_CONNECTION_STRING; // アクセスキーのストレージ接続文字列
+  
+    if (!AZURE_STORAGE_CONNECTION_STRING) {
+        throw Error('Azure Storage Connection string not found');
+    }
+    
+    // Create the BlobServiceClient object with connection string
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+        AZURE_STORAGE_CONNECTION_STRING
+    );
+
+
+    // Create a unique name for the container
+    const containerName = 'ngwordcontainer';
+
+    // Get a reference to a container
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+
+    // downloadBlobToString(containerClient, 'test.txt');
+    const ngWordStr = await downloadBlobToString(containerClient, 'ngwords.txt');
+    const ngWordArray = ngWordStr.split('\n');
+    for(let i in ngWordArray) {
+      regex = new RegExp(ngWordArray[i], 'i');
+      if(regex.test(text)) {
+        return true;
+      }
+    }
+    return false;
+
+    async function downloadBlobToString(containerClient, blobName) {
+        const blobClient = containerClient.getBlobClient(blobName);
+        const downloadResponse = await blobClient.download();
+        const downloaded = await streamToBuffer(downloadResponse.readableStreamBody);
+        return downloaded.toString();
+    }
+    
+    async function streamToBuffer(readableStream) {
+        return new Promise((resolve, reject) => {
+            const chunks = [];
+            readableStream.on('data', (data) => {
+                chunks.push(data instanceof Buffer ? data : Buffer.from(data));
+            });
+            readableStream.on('end', () => {
+                resolve(Buffer.concat(chunks));
+            });
+            readableStream.on('error', reject);
+        });
+    }
+    
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+  }
+}

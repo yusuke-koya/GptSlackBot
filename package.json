@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/yusuke-koya/GptSlackBot#readme",
   "dependencies": {
+    "@azure/storage-blob": "^12.15.0",
     "@slack/web-api": "^6.9.0",
     "openai": "^3.3.0"
   }
