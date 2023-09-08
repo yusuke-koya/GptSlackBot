@@ -90,7 +90,7 @@ module.exports = async function (context, req) {
   const threadTs = event?.thread_ts ?? event?.ts;
   if (event?.type === "app_mention") {
     try {
-      const ngText = await hasNgWord(event?.text);
+      const ngText = await hasNgWord(event?.text, context);
       if(ngText) {
         await postMessage(
           event.channel,
@@ -178,7 +178,7 @@ module.exports = async function (context, req) {
 
 
 
-async function hasNgWord(text) {
+async function hasNgWord(text, context) {
   try {
     console.log("Azure Blob storage v12 - JavaScript quickstart sample");
 
@@ -207,6 +207,7 @@ async function hasNgWord(text) {
     const ngWordStr = await downloadBlobToString(containerClient, 'ngwords.txt');
     const ngWordArray = ngWordStr.split('\n');
     for(let i in ngWordArray) {
+      context.log(ngWordArray[i]);
       regex = new RegExp(ngWordArray[i], 'i');
       if(regex.test(text)) {
         return true;
