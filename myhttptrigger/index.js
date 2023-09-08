@@ -90,7 +90,8 @@ module.exports = async function (context, req) {
   const threadTs = event?.thread_ts ?? event?.ts;
   if (event?.type === "app_mention") {
     try {
-      if(await hasNgWord(event?.text)) {
+      const ngText = await hasNgWord(event?.text);
+      if(ngText) {
         await postMessage(
           event.channel,
           "不適切な言葉が含まれています。",
