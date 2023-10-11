@@ -8,10 +8,13 @@ const {
 
 const openaiClient = new OpenAIApi(
   new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-    basePath: process.env.OPENAI_API_URL + 'openai/deployments/' + process.env.OPENAI_DEPLOY_NAME,
+    apiKey: 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV',
+    // apiKey: process.env.OPENAI_API_KEY,
+    basePath: 'https://se-with-ai-uk-endpoint.ukwest.inference.ml.azure.com/score',
+    // basePath: process.env.OPENAI_API_URL + 'openai/deployments/' + process.env.OPENAI_DEPLOY_NAME,
     baseOptions: {
-      headers: {'api-key': process.env.OPENAI_API_KEY},
+      headers: {'api-key': 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV'},
+      // headers: {'api-key': process.env.OPENAI_API_KEY},
       params: {
         'api-version': '2023-03-15-preview'
       }
