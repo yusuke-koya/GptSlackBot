@@ -94,7 +94,7 @@ try
     );
     context.log('request succeeded');
     context.log(response.body);
-    return response.body.answer;
+    return response.body;
 }catch{
     context.log.error('request failed');
     return err.response.statusText;
