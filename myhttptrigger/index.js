@@ -94,7 +94,18 @@ try
     );
     context.log('request succeeded');
     context.log(response.body);
-    return response.body;
+    const json = JSON.parse(response.body);
+
+    const unicodeUnescape = function(str) {
+        let result = '', strs = str.match(/\\u.{4}/ig);
+        if (!strs) return '';
+        for (let i = 0, len = strs.length; i < len; i++) {
+          result += String.fromCharCode(strs[i].replace('\\u', '0x'));
+        }
+        return result;
+    };
+
+    return unicodeUnescape(json.answer);
 }catch{
     context.log.error('request failed');
     return err.response.statusText;
