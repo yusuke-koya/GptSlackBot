@@ -160,10 +160,12 @@ module.exports = async function (context, req) {
         return { statusCode: 200 };
       }
     //   context.log(openaiResponse);
+      context.log('respond message');
       await postMessage(event.channel, openaiResponse, threadTs, context);
       context.log("ChatGPTBot function post message successfully.");
       return { statusCode: 200 };
     } catch (error) {
+      context.log('catch error');
       context.log(
         await postMessage(
           event.channel,
