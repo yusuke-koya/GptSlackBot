@@ -1,5 +1,9 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { WebClient } = require("@slack/web-api");
+const util = require ('util');
+const request  = require ('request');
+const requestPromise = util.promisify(request);
+
 const {
   ChatCompletionRequestMessageRoleEnum,
   Configuration,
@@ -48,6 +52,55 @@ const postMessage = async (channel, text, threadTs, context) => {
  * @returns content
  */
 const createCompletion = async (messages, context) => {
+try
+{
+    const history_answer = "\""
++"スキルレベルの目安は以下の通りです：\n"
++"\n"
++"- レベル7: 当該専門コンピテンシーの最上位者の一人として、非常に難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、業界をリードした実績をもつ\n"
++"- レベル6: 当該専門コンピテンシーの最上位者の一人として、より難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、社外へ貢献した実績を複数もつ\n"
++"- レベル5: 当該専門コンピテンシーに関し、他を指導することができる高度な専門的知識と技術を有し、社内に貢献している\n"
++"- レベル4: 当該専門コンピテンシーに関し、高度な専門的知識と技術を有し、後進を指導している\n"
++"- レベル3: 当該専門コンピテンシーに関し、業務遂行上十分な知識を有し、実務において複数回活用した経験がある\n"
++"- レベル2: 当該専門コンピテンシーに関し、基本的な知識を有し、実務に使用した実績はあるが、経験も少なく実施能力も限定的である\n"
++"- レベル1: 当該専門コンピテンシーに関し、キーワードは知っており、簡単な説明ならできる程度の限定的な知識を有する\n"
++"\n"
++"これらのレベルは、あなたの専門性、経験、知識、そしてあなたがどの程度他の人を指導できるかに基づいています。(Source: EXES_help-manual-3.txt)\n"
++"\"";
+
+    const data = {
+        "chat_history":[
+            {
+                "inputs": {
+                    "question": "スキルレベルをどのぐらいに設定していいかわかりません。スキルレベルの目安はありますか？"
+                },
+                "outputs": {
+                    "answer":history_answer
+                }
+            }
+        ],
+        "question":"規模の大きいプロジェクトを経験しました"
+    }
+    const api_key = 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV';
+    const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
+
+    const response = await requestPromise(
+        {  
+            method: 'POST',
+            url: 'https://se-with-ai-uk-endpoint.ukwest.inference.ml.azure.com/score',
+            headers,
+            body: JSON.stringify(data)
+        }
+    );
+    context.log('request succeed');
+    context.log(response.body);
+}
+catch
+{
+    context.log('request error');
+}
+
+
   try {
     const response = await openaiClient.createChatCompletion({
       messages: messages,
