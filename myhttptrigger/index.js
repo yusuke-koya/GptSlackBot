@@ -105,7 +105,7 @@ try
         return result;
     };
 
-    return unicodeUnescape(json.answer);
+    return unicodeUnescape(response.body);
 }catch{
     context.log.error('request failed');
     return err.response.statusText;
