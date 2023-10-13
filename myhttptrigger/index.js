@@ -52,66 +52,6 @@ const postMessage = async (channel, text, threadTs, context) => {
  * @returns content
  */
 const createCompletion = async (messages, context) => {
-try
-{
-    const history_answer = "\""
-    +"スキルレベルの目安は以下の通りです：\n"
-    +"\n"
-    +"- レベル7: 当該専門コンピテンシーの最上位者の一人として、非常に難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、業界をリードした実績をもつ\n"
-    +"- レベル6: 当該専門コンピテンシーの最上位者の一人として、より難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、社外へ貢献した実績を複数もつ\n"
-    +"- レベル5: 当該専門コンピテンシーに関し、他を指導することができる高度な専門的知識と技術を有し、社内に貢献している\n"
-    +"- レベル4: 当該専門コンピテンシーに関し、高度な専門的知識と技術を有し、後進を指導している\n"
-    +"- レベル3: 当該専門コンピテンシーに関し、業務遂行上十分な知識を有し、実務において複数回活用した経験がある\n"
-    +"- レベル2: 当該専門コンピテンシーに関し、基本的な知識を有し、実務に使用した実績はあるが、経験も少なく実施能力も限定的である\n"
-    +"- レベル1: 当該専門コンピテンシーに関し、キーワードは知っており、簡単な説明ならできる程度の限定的な知識を有する\n"
-    +"\n"
-    +"これらのレベルは、あなたの専門性、経験、知識、そしてあなたがどの程度他の人を指導できるかに基づいています。(Source: EXES_help-manual-3.txt)\n"
-    +"\"";
-
-    const data = {
-        "chat_history":[
-            {
-                "inputs": {
-                    "question": "スキルレベルをどのぐらいに設定していいかわかりません。スキルレベルの目安はありますか？"
-                },
-                "outputs": {
-                    "answer":history_answer
-                }
-            }
-        ],
-        "question":"規模の大きいプロジェクトを経験しました"
-    }
-    const api_key = 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV';
-    const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
-
-    const response = await requestPromise(
-        {  
-            method: 'POST',
-            url: 'https://se-with-ai-uk-endpoint.ukwest.inference.ml.azure.com/score',
-            headers,
-            body: JSON.stringify(data)
-        }
-    );
-    context.log('request succeeded');
-    context.log(response.body);
-    const json = JSON.parse(response.body);
-
-    const unicodeUnescape = function(str) {
-        let result = '', strs = str.match(/\\u.{4}/ig);
-        if (!strs) return '';
-        for (let i = 0, len = strs.length; i < len; i++) {
-          result += String.fromCharCode(strs[i].replace('\\u', '0x'));
-        }
-        return result;
-    };
-
-    return unicodeUnescape(response.body);
-}catch{
-    context.log.error('request failed');
-    return err.response.statusText;
-}
-
-/*
   try {
     const response = await openaiClient.createChatCompletion({
       messages: messages,
@@ -126,7 +66,72 @@ try
     context.log.error(err);
     return err.response.statusText;
   }
-*/
+};
+
+/**
+ * ChatGPTからメッセージを受け取る
+ * @param {string} message 尋ねるメッセージ
+ * @param {object} context Azure Functions のcontext
+ * @returns content
+ */
+const createCompletion2 = async (message, context) => {
+  try
+  {
+    // const history_answer = "\""
+    // +"スキルレベルの目安は以下の通りです：\n"
+    // +"\n"
+    // +"- レベル7: 当該専門コンピテンシーの最上位者の一人として、非常に難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、業界をリードした実績をもつ\n"
+    // +"- レベル6: 当該専門コンピテンシーの最上位者の一人として、より難易度が高く、規模の大きいプロジェクトにおいて、他への支援・指導に極めて優れた対応がとれ、社外へ貢献した実績を複数もつ\n"
+    // +"- レベル5: 当該専門コンピテンシーに関し、他を指導することができる高度な専門的知識と技術を有し、社内に貢献している\n"
+    // +"- レベル4: 当該専門コンピテンシーに関し、高度な専門的知識と技術を有し、後進を指導している\n"
+    // +"- レベル3: 当該専門コンピテンシーに関し、業務遂行上十分な知識を有し、実務において複数回活用した経験がある\n"
+    // +"- レベル2: 当該専門コンピテンシーに関し、基本的な知識を有し、実務に使用した実績はあるが、経験も少なく実施能力も限定的である\n"
+    // +"- レベル1: 当該専門コンピテンシーに関し、キーワードは知っており、簡単な説明ならできる程度の限定的な知識を有する\n"
+    // +"\n"
+    // +"これらのレベルは、あなたの専門性、経験、知識、そしてあなたがどの程度他の人を指導できるかに基づいています。(Source: EXES_help-manual-3.txt)\n"
+    // +"\"";
+
+    const data = {
+      "chat_history":[
+        // {
+        //   "inputs": {
+        //     "question": "スキルレベルをどのぐらいに設定していいかわかりません。スキルレベルの目安はありますか？"
+        //   },
+        //   "outputs": {
+        //     "answer":history_answer
+        //   }
+        // }
+      ],
+      "question":message
+    }
+    const api_key = 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV';
+    const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
+
+    const response = await requestPromise(
+      {  
+        method: 'POST',
+        url: 'https://se-with-ai-uk-endpoint.ukwest.inference.ml.azure.com/score',
+        headers,
+        body: JSON.stringify(data)
+      }
+    );
+    context.log(response.body);
+    const json = JSON.parse(response.body);
+
+    const unicodeUnescape = function(str) {
+      let result = '', strs = str.match(/\\u.{4}/ig);
+      if (!strs) return '';
+      for (let i = 0, len = strs.length; i < len; i++) {
+        result += String.fromCharCode(strs[i].replace('\\u', '0x'));
+      }
+      return result;
+    };
+
+    return unicodeUnescape(response.body);
+  }catch{
+    context.log.error('request failed');
+    return err.response.statusText;
+  }
 };
 
 module.exports = async function (context, req) {
@@ -169,52 +174,54 @@ module.exports = async function (context, req) {
         return;
       }
 
-      const threadMessagesResponse = await slackClient.conversations.replies({
-        channel: event.channel,
-        ts: threadTs,
-      });
-      if (threadMessagesResponse.ok !== true) {
-        await postMessage(
-          event.channel,
-          "[Bot]メッセージの取得に失敗しました。",
-          threadTs,
-          context
-        );
-        return;
-      }
-      const botMessages = threadMessagesResponse.messages
-        .sort((a, b) => Number(a.ts) - Number(b.ts))
-        // .filter(
-        //   (message) => {
-        //     return message.text.includes(GPT_BOT_USER_ID) || message.user == GPT_BOT_USER_ID // Slack App のメンバーIDに一致するものだけ
-        //   }
-        // )
-        .slice(GPT_THREAD_MAX_COUNT * -1)
-        .map((m) => {
-          const role = m.bot_id
-            ? ChatCompletionRequestMessageRoleEnum.Assistant
-            : ChatCompletionRequestMessageRoleEnum.User;
-            // context.log(m.text);
-          return { role: role, content: m.text.replace(/]+>/g, "") };
-        });
-      if (botMessages.length < 1) {
-        await postMessage(
-          event.channel,
-          "[Bot]質問メッセージが見つかりませんでした。@exa-kun-bot0 を付けて質問してみて下さい。",
-          threadTs,
-          context
-        );
-        return;
-      }
-      context.log(botMessages);
-      var postMessages = [
-        {
-          role: ChatCompletionRequestMessageRoleEnum.System,
-          content: CHAT_GPT_SYSTEM_PROMPT,
-        },
-        ...botMessages,
-      ];
-      const openaiResponse = await createCompletion(postMessages, context);
+      // const threadMessagesResponse = await slackClient.conversations.replies({
+      //   channel: event.channel,
+      //   ts: threadTs,
+      // });
+      // if (threadMessagesResponse.ok !== true) {
+      //   await postMessage(
+      //     event.channel,
+      //     "[Bot]メッセージの取得に失敗しました。",
+      //     threadTs,
+      //     context
+      //   );
+      //   return;
+      // }
+      // const botMessages = threadMessagesResponse.messages
+      //   .sort((a, b) => Number(a.ts) - Number(b.ts))
+      //   // .filter(
+      //   //   (message) => {
+      //   //     return message.text.includes(GPT_BOT_USER_ID) || message.user == GPT_BOT_USER_ID // Slack App のメンバーIDに一致するものだけ
+      //   //   }
+      //   // )
+      //   .slice(GPT_THREAD_MAX_COUNT * -1)
+      //   .map((m) => {
+      //     const role = m.bot_id
+      //       ? ChatCompletionRequestMessageRoleEnum.Assistant
+      //       : ChatCompletionRequestMessageRoleEnum.User;
+      //       // context.log(m.text);
+      //     return { role: role, content: m.text.replace(/]+>/g, "") };
+      //   });
+      // if (botMessages.length < 1) {
+      //   await postMessage(
+      //     event.channel,
+      //     "[Bot]質問メッセージが見つかりませんでした。@exa-kun-bot0 を付けて質問してみて下さい。",
+      //     threadTs,
+      //     context
+      //   );
+      //   return;
+      // }
+      // context.log(botMessages);
+      // var postMessages = [
+      //   {
+      //     role: ChatCompletionRequestMessageRoleEnum.System,
+      //     content: CHAT_GPT_SYSTEM_PROMPT,
+      //   },
+      //   ...botMessages,
+      // ];
+      // const openaiResponse = await createCompletion(postMessages, context);
+
+      const openaiResponse = await createCompletion2(event?.text, context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
           event.channel,
@@ -225,12 +232,10 @@ module.exports = async function (context, req) {
         return { statusCode: 200 };
       }
     //   context.log(openaiResponse);
-      context.log('respond message');
       await postMessage(event.channel, openaiResponse, threadTs, context);
       context.log("ChatGPTBot function post message successfully.");
       return { statusCode: 200 };
     } catch (error) {
-      context.log('catch error');
       context.log(
         await postMessage(
           event.channel,
