@@ -129,7 +129,7 @@ const createCompletion2 = async (messages, question, context) => {
     };
 
     return unicodeUnescape(response.body);
-  }catch{
+  }catch(err){
     context.log.error('request failed');
     return err.response.statusText;
   }
