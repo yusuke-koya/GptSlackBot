@@ -74,7 +74,7 @@ const createCompletion = async (messages, context) => {
  * @param {object} context Azure Functions のcontext
  * @returns content
  */
-const createCompletion2 = async (message, context) => {
+const createCompletion2 = async (messages, question, context) => {
   try
   {
     // const history_answer = "\""
@@ -92,25 +92,26 @@ const createCompletion2 = async (message, context) => {
     // +"\"";
 
     const data = {
-      "chat_history":[
-        // {
-        //   "inputs": {
-        //     "question": "スキルレベルをどのぐらいに設定していいかわかりません。スキルレベルの目安はありますか？"
-        //   },
-        //   "outputs": {
-        //     "answer":history_answer
-        //   }
-        // }
-      ],
-      "question":message
+      // "chat_history":[
+      //   {
+      //     "inputs": {
+      //       "question": "スキルレベルをどのぐらいに設定していいかわかりません。スキルレベルの目安はありますか？"
+      //     },
+      //     "outputs": {
+      //       "answer":history_answer
+      //     }
+      //   }
+      // ],
+      "messages":messages,
+      "question":question
     }
-    const api_key = 'p3UibjbEto8Fs4Nxcva5NUKBhaUeCKZV';
+    const api_key = 'eHhhYHdYuJ2yUoMFFnafA7emIy3SOvIS';
     const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
 
     const response = await requestPromise(
       {  
         method: 'POST',
-        url: 'https://se-with-ai-uk-endpoint.ukwest.inference.ml.azure.com/score',
+        url: 'https://exes-chat-endpoint.ukwest.inference.ml.azure.com/score',
         headers,
         body: JSON.stringify(data)
       }
@@ -174,54 +175,54 @@ module.exports = async function (context, req) {
         return;
       }
 
-      // const threadMessagesResponse = await slackClient.conversations.replies({
-      //   channel: event.channel,
-      //   ts: threadTs,
-      // });
-      // if (threadMessagesResponse.ok !== true) {
-      //   await postMessage(
-      //     event.channel,
-      //     "[Bot]メッセージの取得に失敗しました。",
-      //     threadTs,
-      //     context
-      //   );
-      //   return;
-      // }
-      // const botMessages = threadMessagesResponse.messages
-      //   .sort((a, b) => Number(a.ts) - Number(b.ts))
-      //   // .filter(
-      //   //   (message) => {
-      //   //     return message.text.includes(GPT_BOT_USER_ID) || message.user == GPT_BOT_USER_ID // Slack App のメンバーIDに一致するものだけ
-      //   //   }
-      //   // )
-      //   .slice(GPT_THREAD_MAX_COUNT * -1)
-      //   .map((m) => {
-      //     const role = m.bot_id
-      //       ? ChatCompletionRequestMessageRoleEnum.Assistant
-      //       : ChatCompletionRequestMessageRoleEnum.User;
-      //       // context.log(m.text);
-      //     return { role: role, content: m.text.replace(/]+>/g, "") };
-      //   });
-      // if (botMessages.length < 1) {
-      //   await postMessage(
-      //     event.channel,
-      //     "[Bot]質問メッセージが見つかりませんでした。@exa-kun-bot0 を付けて質問してみて下さい。",
-      //     threadTs,
-      //     context
-      //   );
-      //   return;
-      // }
-      // context.log(botMessages);
-      // var postMessages = [
-      //   {
-      //     role: ChatCompletionRequestMessageRoleEnum.System,
-      //     content: CHAT_GPT_SYSTEM_PROMPT,
-      //   },
-      //   ...botMessages,
-      // ];
-      // const openaiResponse = await createCompletion(postMessages, context);
+      const threadMessagesResponse = await slackClient.conversations.replies({
+        channel: event.channel,
+        ts: threadTs,
+      });
+      if (threadMessagesResponse.ok !== true) {
+        await postMessage(
+          event.channel,
+          "[Bot]メッセージの取得に失敗しました。",
+          threadTs,
+          context
+        );
+        return;
+      }
+      const botMessages = threadMessagesResponse.messages
+        .sort((a, b) => Number(a.ts) - Number(b.ts))
+        // .filter(
+        //   (message) => {
+        //     return message.text.includes(GPT_BOT_USER_ID) || message.user == GPT_BOT_USER_ID // Slack App のメンバーIDに一致するものだけ
+        //   }
+        // )
+        .slice(GPT_THREAD_MAX_COUNT * -1)
+        .map((m) => {
+          const role = m.bot_id
+            ? ChatCompletionRequestMessageRoleEnum.Assistant
+            : ChatCompletionRequestMessageRoleEnum.User;
+            // context.log(m.text);
+          return { role: role, content: m.text.replace(/]+>/g, "") };
+        });
+      if (botMessages.length < 1) {
+        await postMessage(
+          event.channel,
+          "[Bot]質問メッセージが見つかりませんでした。@exa-kun-bot0 を付けて質問してみて下さい。",
+          threadTs,
+          context
+        );
+        return;
+      }
+      context.log(botMessages);
+      var postMessages = [
+        {
+          role: ChatCompletionRequestMessageRoleEnum.System,
+          content: CHAT_GPT_SYSTEM_PROMPT,
+        },
+        ...botMessages,
+      ];
 
-      const openaiResponse = await createCompletion2(event?.text, context);
+      // const openaiResponse = await createCompletion(postMessages, context);
+      const openaiResponse = await createCompletion2(postMessages, event?.text, context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
           event.channel,
