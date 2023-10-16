@@ -26,7 +26,7 @@ const openaiClient = new OpenAIApi(
   })
 );
 const slackClient = new WebClient(process.env.SLACK_BOT_TOKEN);
-const GPT_BOT_USER_ID = process.env.GPT_BOT_USER_ID;
+// const GPT_BOT_USER_ID = process.env.GPT_BOT_USER_ID;
 const CHAT_GPT_SYSTEM_PROMPT = process.env.CHAT_GPT_SYSTEM_PROMPT;
 const GPT_THREAD_MAX_COUNT = process.env.GPT_THREAD_MAX_COUNT;
 
@@ -107,15 +107,16 @@ const createCompletion2 = async (messages, question, context) => {
     }
     const api_key = 'eHhhYHdYuJ2yUoMFFnafA7emIy3SOvIS';
     const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
-
+context.log("***** " + 1);
     const response = await requestPromise(
-      {  
+      {
         method: 'POST',
         url: 'https://exes-chat-endpoint.ukwest.inference.ml.azure.com/score',
         headers,
         body: JSON.stringify(data)
       }
     );
+context.log("***** " + 2);
     context.log(response.body);
     const json = JSON.parse(response.body);
 
@@ -127,7 +128,7 @@ const createCompletion2 = async (messages, question, context) => {
       }
       return result;
     };
-
+context.log("***** " + 3);
     return unicodeUnescape(response.body);
   }catch(err){
     context.log.error('request failed');
