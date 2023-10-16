@@ -131,7 +131,7 @@ const createCompletion2 = async (messages, question, context) => {
     return unicodeUnescape(response.body);
   }catch(err){
     context.log.error('request failed');
-    return err.response.statusText;
+    return err;
   }
 };
 
@@ -222,7 +222,7 @@ module.exports = async function (context, req) {
       ];
 
       // const openaiResponse = await createCompletion(postMessages, context);
-      const openaiResponse = await createCompletion2(postMessages, event?.text, context);
+      const openaiResponse = await createCompletion2(botMessages, event?.text, context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
           event.channel,
