@@ -117,8 +117,8 @@ context.log("***** " + 1);
       }
     );
 context.log("***** " + 2);
-    context.log(response.body);
-    const json = JSON.parse(response.body);
+    context.log(response);
+    // const json = JSON.parse(response.body);
 
     const unicodeUnescape = function(str) {
       let result = '', strs = str.match(/\\u.{4}/ig);
