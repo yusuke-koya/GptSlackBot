@@ -106,7 +106,7 @@ const createCompletion2 = async (messages, question, context) => {
       "question":question
     }
     const api_key = 'eHhhYHdYuJ2yUoMFFnafA7emIy3SOvIS';
-    const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'se-with-ai-uk-endpoint-1' };
+    const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key), 'azureml-model-deployment': 'exes-chat-endpoint-1' };
 context.log("***** " + 1);
     const response = await requestPromise(
       {
