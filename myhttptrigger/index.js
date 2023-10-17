@@ -129,8 +129,7 @@ context.log("***** " + 2);
       return result;
     };
 context.log("***** " + 3);
-    // return unicodeUnescape(response.body);
-    return response.body;
+    return unicodeUnescape(response.body);
   }catch(err){
     context.log.error('request failed');
     return err;
