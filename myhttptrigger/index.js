@@ -51,7 +51,6 @@ const createCompletion = async (messages, question, context) => {
         body: JSON.stringify(data)
       }
     );
-    context.log('******')
     context.log(response.body);
     // const json = JSON.parse(response.body);
 
@@ -67,7 +66,9 @@ const createCompletion = async (messages, question, context) => {
       // }
       // return result;
     };
-    return unicodeUnescape(response.body);
+    const responseString = response.body;
+    const responseJson = JSON.parse(responseString);
+    return unicodeUnescape(responseJson.answer);
   }catch(err){
     context.log.error('request failed');
     return err;
