@@ -56,12 +56,16 @@ const createCompletion = async (messages, question, context) => {
     // const json = JSON.parse(response.body);
 
     const unicodeUnescape = function(str) {
-      let result = '', strs = str.match(/\\u.{4}/ig);
-      if (!strs) return '';
-      for (let i = 0, len = strs.length; i < len; i++) {
-        result += String.fromCharCode(strs[i].replace('\\u', '0x'));
-      }
-      return result;
+      return str.replace(/\\u([a-fA-F0-9]{4})/g, function(matchedString, group1) {
+        return String.fromCharCode(parseInt(group1, 16));
+      });
+
+      // let result = '', strs = str.match(/\\u.{4}/ig);
+      // if (!strs) return '';
+      // for (let i = 0, len = strs.length; i < len; i++) {
+      //   result += String.fromCharCode(strs[i].replace('\\u', '0x'));
+      // }
+      // return result;
     };
     return unicodeUnescape(response.body);
   }catch(err){
