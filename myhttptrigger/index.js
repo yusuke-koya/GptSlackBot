@@ -161,7 +161,14 @@ module.exports = async function (context, req) {
         ...botMessages,
       ];
 
-      const openaiResponse = await createCompletion(botMessages, event?.text?.replace(/(<@([^>]+)> )/gi, ''), context);
+      // メンションの文字列を除去
+      let question = event?.text;
+      const match = question.match(/(<@([^>]+)> )/);
+      if(match?.index == 0) {
+        question = question.substring(match[0].length)
+      }
+
+      const openaiResponse = await createCompletion(botMessages, question, context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
           event.channel,
