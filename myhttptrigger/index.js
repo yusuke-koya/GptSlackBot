@@ -160,7 +160,7 @@ module.exports = async function (context, req) {
         ...botMessages,
       ];
 
-      const openaiResponse = await createCompletion(botMessages, event?.text, context);
+      const openaiResponse = await createCompletion(botMessages, event?.text?.replace(/(<@([^>]+)> )/gi, ''), context);
       if (openaiResponse == null || openaiResponse == "") {
         await postMessage(
           event.channel,
