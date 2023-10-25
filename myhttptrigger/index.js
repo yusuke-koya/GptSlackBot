@@ -52,19 +52,12 @@ const createCompletion = async (messages, question, context) => {
       }
     );
     context.log(response.body);
-    // const json = JSON.parse(response.body);
 
+    // エスケープされた Unicode 文字をアンエスケープする
     const unicodeUnescape = function(str) {
       return str.replace(/\\u([a-fA-F0-9]{4})/g, function(matchedString, group1) {
         return String.fromCharCode(parseInt(group1, 16));
       });
-
-      // let result = '', strs = str.match(/\\u.{4}/ig);
-      // if (!strs) return '';
-      // for (let i = 0, len = strs.length; i < len; i++) {
-      //   result += String.fromCharCode(strs[i].replace('\\u', '0x'));
-      // }
-      // return result;
     };
     const responseString = response.body;
     const responseJson = JSON.parse(responseString);
@@ -130,11 +123,6 @@ module.exports = async function (context, req) {
       }
       const botMessages = threadMessagesResponse.messages
         .sort((a, b) => Number(a.ts) - Number(b.ts))
-        // .filter(
-        //   (message) => {
-        //     return message.text.includes(GPT_BOT_USER_ID) || message.user == GPT_BOT_USER_ID // Slack App のメンバーIDに一致するものだけ
-        //   }
-        // )
         .slice(GPT_THREAD_MAX_COUNT * -1)
         .map((m) => {
           const role = m.bot_id
