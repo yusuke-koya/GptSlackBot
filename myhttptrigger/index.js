@@ -217,7 +217,7 @@ async function hasNgWord(text) {
     const ngWordArray = ngWordStr.split('\n');
     for(let i in ngWordArray) {
       regex = new RegExp(ngWordArray[i].trim(), 'i');
-      if(regex.test(text)) {
+      if(ngWordArray[i].trim() && regex.test(text)) {
         return true;
       }
     }
