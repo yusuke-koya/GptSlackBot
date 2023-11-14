@@ -39,9 +39,9 @@ const createCompletion = async (messages, question, context) => {
       "messages":messages,
       "question":question
     }
-    const API_KEY = 'eHhhYHdYuJ2yUoMFFnafA7emIy3SOvIS';
-    const API_URL = 'https://exes-chat-endpoint.ukwest.inference.ml.azure.com/score';
-    const MODEL_DEPLOYMENT = 'exes-chat-endpoint-1';
+    const API_KEY = process.env.API_KEY;
+    const API_URL = process.env.API_URL;
+    const MODEL_DEPLOYMENT = process.env.MODEL_DEPLOYMENT;
     const headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ API_KEY), 'azureml-model-deployment': MODEL_DEPLOYMENT };
     const response = await requestPromise(
       {
